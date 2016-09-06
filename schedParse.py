@@ -4,7 +4,6 @@ Created on Sep 2, 2016
 @author: frouglas
 '''
 
-import os
 import csv
 
 class team():
@@ -43,6 +42,6 @@ def parseELO(teamInd, teamD):
     with open(ELOFile) as ELORead:
         fileRead = csv.reader(ELORead, delimiter=',')
         for row in fileRead:
-            teamD[teamInd[row[0]]].ELO = row[1]
+            teamD[teamInd[row[0]]].ELO = int(row[1])
     parseResult = [teamInd, teamD]
     return parseResult
