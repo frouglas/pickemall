@@ -7,16 +7,17 @@ Created on Sep 3, 2016
 from schedParse import *
 from simulator import *
 import pickle
+import numpy as np
 
 usePicks = input("would you like to use an existing set of picks? ")
 if usePicks == "y":
-    lockedPicks = pickle.load("pickList.list")
+    lockedPicks = pickle.load(open("pickList.list","rb"))
     startWk = len(lockedPicks)
 else:
     lockedPicks = []
     startWk = 0
 
-sims = 100000
+sims = 100000000
 
 initRun = parseSched()
 
@@ -44,7 +45,7 @@ for i in range(0,sims):
 #    print "--------"
     lengthList[thisElim-1].append(thisPick)
     teamList[thisPick].append(thisElim)
-    if thisElim == 17:
+    if thisElim == 17 - len(lockedPicks):
         completes[thisPick] += 1
         
 bestPick = -1
@@ -73,12 +74,18 @@ for i in range(0,len(completes)):
 
 
 bestTeam = teamDB[bestPick].name
+avgLength1 = np.mean(teamList[bestPick]) + len(lockedPicks)
 team2 = teamDB[pick2].name
+avgLength2 = np.mean(teamList[pick2]) + len(lockedPicks)
 team3 = teamDB[pick3].name
+avgLength3 = np.mean(teamList[pick3]) + len(lockedPicks)
 
-print "the best pick for the current week is " + bestTeam + ", leading to " + str(bestPickCompletes) + " successful elimination seasons"
-print "    the 2nd best pick for the current week is " + team2 + ", leading to " + str(pick2Completes) + " successful elimination seasons"
-print "    the 3rd best pick for the current week is " + team3 + ", leading to " + str(pick3Completes) + " successful elimination seasons"
+print "the best pick for week " + str(len(lockedPicks)+1) + " is " + bestTeam + ", leading to " + str(bestPickCompletes) + " successful elimination seasons"
+print "    average duration given this selection: " + str(avgLength1)
+print "the 2nd best pick for week " + str(len(lockedPicks)+1) + " is " + team2 + ", leading to " + str(pick2Completes) + " successful elimination seasons"
+print "    average duration given this selection: " + str(avgLength2)
+print "the 3rd best pick for week " + str(len(lockedPicks)+1) + " is " + team3 + ", leading to " + str(pick3Completes) + " successful elimination seasons"
+print "    average duration given this selection: " + str(avgLength3)
 
 currPick = input("which team would you like to select? ")
 if currPick == 1:
@@ -88,4 +95,4 @@ elif currPick == 2:
 elif currPick == 3:
     lockedPicks.append(pick3)
 
-pickle.dump("pickList.list")
+pickle.dump(lockedPicks, open("pickList.list","wb"))
